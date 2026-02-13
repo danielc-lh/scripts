@@ -1,6 +1,8 @@
 package capoeira
 
-import "sync"
+import (
+	"sync"
+)
 
 // ChannelTransport implements Transport for two parties using Go channels.
 type ChannelTransport struct {
@@ -9,13 +11,14 @@ type ChannelTransport struct {
 	lock      sync.RWMutex
 }
 
-func NewChannelTransport(partyA, partyB string) *ChannelTransport {
+func NewChannelTransport(parties []string) *ChannelTransport {
+	channels := make(map[string]chan interface{})
+	for _, party := range parties {
+		channels[party] = make(chan interface{}, 1)
+	}
 	return &ChannelTransport{
-		locations: []string{partyA, partyB},
-		channels: map[string]chan interface{}{
-			partyA: make(chan interface{}, 1),
-			partyB: make(chan interface{}, 1),
-		},
+		locations: parties,
+		channels:  channels,
 	}
 }
 

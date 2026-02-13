@@ -84,15 +84,16 @@ func (op ProjectorChoreoOp) Comm(sender, receiver Location, data Located) Locate
 	if sender.Name() == op.Target.Name() {
 		// Send via transport
 		if t, ok := op.Transport.(Transport); ok {
-			fmt.Println("Sending from", sender.Name(), "to", receiver.Name(), "data:", data.Value)
+			fmt.Printf("Sending from %s to %s. data: %+v\n", sender.Name(), receiver.Name(), data.Value)
 			t.Send(sender.Name(), receiver.Name(), data.Value)
 		}
 		return Located{Value: data.Value, Location: receiver}
 	} else if receiver.Name() == op.Target.Name() {
 		// Receive via transport
 		if t, ok := op.Transport.(Transport); ok {
-			fmt.Printf("Receiving from %s at %s... as location (op) %s\n", sender.Name(), receiver.Name(), op.Target.Name())
+			fmt.Printf("Receiving from %s at %s\n", sender.Name(), receiver.Name())
 			val := t.Receive(sender.Name(), receiver.Name())
+			fmt.Printf("Received val: %+v\n", val)
 			return Located{Value: val, Location: receiver}
 		}
 		return Located{Value: nil, Location: receiver}
